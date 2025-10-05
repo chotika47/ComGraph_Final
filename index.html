@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 
@@ -16,11 +14,14 @@
 <body>
     
     <!-- core three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/EXRLoader.js"></script>
+    <!-- โหลด GLTFLoader-->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script> 
+
     <!-- lil-gui -->
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
     <script>
@@ -146,9 +147,46 @@
                 }
             );
         }
-        
+
+        //ฟังก์ชันโหลด glb + ใส่ texture 
+        /*
+        function loadOBJwithMaps(pathOBJ, textures, position = { x: 0, y: 0, z: 0 }, scale = 1) {
+            const loader = new THREE.OBJLoader();
+            const texLoader = new THREE.TextureLoader();
+
+            const material = new THREE.MeshStandardMaterial({
+                map: textures.baseColor ? texLoader.load(textures.baseColor) : null,
+                normalMap: textures.normal ? texLoader.load(textures.normal) : null,
+                roughnessMap: textures.roughness ? texLoader.load(textures.roughness) : null,
+                roughness: 1.0,
+                metalnessMap: textures.metalness ? texLoader.load(textures.metalness) : null,
+                metalness: 0.0
+            });
+            
+
+            //โหลด obj จาก link
+            loader.load(
+                pathOBJ,
+                (object) => {
+                    object.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = material;
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+
+                    object.position.set(position.x, position.y, position.z);
+                    object.scale.set(scale, scale, scale);
+                    scene.add(object);
+                }
+            );
+        }
+        */
+
         // โหลดร้าน
         //fl-1
+        /*
         loadOBJwithMaps(
             'https://chotika47.github.io/ComGraph_Final/fl1.obj',
             { baseColor: 'https://chotika47.github.io/ComGraph_Final/wood_baseColor.png',
@@ -169,6 +207,8 @@
             { x: 0, y: 0, z: 0 },
             1
         );
+        */
+        
         // โหลดต้นไม้
         loadOBJwithMaps(
             'https://chotika47.github.io/ComGraph_Final/trank.obj',
@@ -225,7 +265,31 @@
             1
         );
         
-        
+        // --- โหลดไฟล์ .glb ---
+        /**/
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'https://chotika47.github.io/ComGraph_Final/awning.glb',  
+            (gltf) => {
+                const model = gltf.scene;
+                scene.add(model);
+            }
+        );
+        loader.load(
+            'https://chotika47.github.io/ComGraph_Final/blank_fl.glb',  
+            (gltf) => {
+                const model = gltf.scene;
+                scene.add(model);
+            }
+        );
+        loader.load(
+            'https://chotika47.github.io/ComGraph_Final/woodFloor.glb',  
+            (gltf) => {
+                const model = gltf.scene;
+                scene.add(model);
+            }
+        );
+            
 
 
         // ✅ render loop
