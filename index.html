@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html>
 
@@ -12,14 +14,17 @@
 </head>
 
 <body>
+    
     <!-- core three.js -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
+    
     <!-- lil-gui -->
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
     <script>
+       
 
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -44,7 +49,7 @@
         const ambientLight = new THREE.AmbientLight(0x808080); // แสงสว่างทั่วไป
         scene.add(ambientLight);
         //Directional Light
-        const directionalLight = new THREE.DirectionalLight(0xffeedd, 1.5); // แสงทิศทาง
+        const directionalLight = new THREE.DirectionalLight(0xffeedd, 0.8); // แสงทิศทาง
         directionalLight.position.set(10, 5, 10);
         directionalLight.castShadow = true; // ✅ แสงนี้สร้างเงา
         scene.add(directionalLight);
@@ -74,7 +79,7 @@
         );
 
         //พื้น
-        const textFloor = new THREE.TextureLoader().load('https://chotika47.github.io/ComGraph_Final/GrassGround_BaseColor.png', t => {
+        const textFloor = new THREE.TextureLoader().load('https://chotika47.github.io/ComGraph_Final/brick_pavement_02_diff_1k.jpg', t => {
             t.wrapS = THREE.RepeatWrapping;
             t.wrapT = THREE.RepeatWrapping;
         });
@@ -89,6 +94,25 @@
         //plane.position.y = -0.5;
         plane.receiveShadow = true; // ✅ พื้นรับเงา
         scene.add(plane);
+
+        
+        /*
+        function loadObj (pathOBJ){
+            const objLoader = new OBJLoader();
+            objLoader.load(pathOBJ, (root) => {
+                scene.add(root);
+            });
+        }
+        
+        function loadMtl (pathMTL){
+            const mtlLoader = new MTLLoader();
+            mtlLoader.load('resources/models/windmill/windmill.mtl', (mtl) => {
+                mtl.preload();
+                objLoader.setMaterials(mtl);
+            });
+        }
+        */
+        
 
         //ฟังก์ชันโหลด obj + ใส่texture 
         function loadOBJwithMaps(pathOBJ, textures, position = { x: 0, y: 0, z: 0 }, scale = 1) {
@@ -126,7 +150,7 @@
         // โหลดร้าน
         //fl-1
         loadOBJwithMaps(
-            'https://chotika47.github.io/ComGraph_Final/Fl_1.obj',
+            'https://chotika47.github.io/ComGraph_Final/fl1.obj',
             { baseColor: 'https://chotika47.github.io/ComGraph_Final/wood_baseColor.png',
               normal: 'https://chotika47.github.io/ComGraph_Final/wood_normal.png',
               metalness: 'https://chotika47.github.io/ComGraph_Final/wood_metallicRoughness.png'
@@ -137,7 +161,7 @@
         
         //fl-2
         loadOBJwithMaps(
-            'https://chotika47.github.io/ComGraph_Final/Fl_2.obj',
+            'https://chotika47.github.io/ComGraph_Final/fl2.obj',
             { baseColor: 'https://chotika47.github.io/ComGraph_Final/wood_baseColor.png',
               normal: 'https://chotika47.github.io/ComGraph_Final/wood_normal.png',
               metalness: 'https://chotika47.github.io/ComGraph_Final/wood_metallicRoughness.png',
@@ -147,7 +171,7 @@
         );
         // โหลดต้นไม้
         loadOBJwithMaps(
-            'https://chotika47.github.io/ComGraph_Final/pine_trank.obj',
+            'https://chotika47.github.io/ComGraph_Final/trank.obj',
             { baseColor: 'https://chotika47.github.io/ComGraph_Final/Trank_baseColor.png',
               normal: 'https://chotika47.github.io/ComGraph_Final/Trank_normal.png',
             },
@@ -155,7 +179,7 @@
             1
         );
         loadOBJwithMaps(
-            'https://chotika47.github.io/ComGraph_Final/pine_leaves.obj',
+            'https://chotika47.github.io/ComGraph_Final/leaves.obj',
             { baseColor: 'https://chotika47.github.io/ComGraph_Final/Leavs_baseColor.png'},
             { x: 0, y: 0, z: 0 },
             1
@@ -171,6 +195,37 @@
             { x: 0, y: 0, z: 0 },
             1
         );
+        // โหลดชื่อ
+        loadOBJwithMaps(
+            'https://chotika47.github.io/ComGraph_Final/name.obj',
+            { },
+            { x: 0, y: 0, z: 0 },
+            1
+        );
+        // โหลดกรอบรูป
+        loadOBJwithMaps(
+            'https://chotika47.github.io/ComGraph_Final/profileImg.obj',
+            { baseColor:'https://chotika47.github.io/ComGraph_Final/รูปชุดนิสิต.jpg'},
+            { x: 0, y: 0, z: 0 },
+            1
+        );
+        
+        // โหลดกรอบรูปlogo
+        loadOBJwithMaps(
+            'https://chotika47.github.io/ComGraph_Final/logo_frame.obj',
+            {},
+            { x: 0, y: 0, z: 0 },
+            1
+        );
+        // โหลดรูปlogo
+        loadOBJwithMaps(
+            'https://chotika47.github.io/ComGraph_Final/thLogoImg.obj',
+            { baseColor:'https://chotika47.github.io/ComGraph_Final/KU_Symbol_Thai.jpg'},
+            { x: 0, y: 0, z: 0 },
+            1
+        );
+        
+        
 
 
         // ✅ render loop
