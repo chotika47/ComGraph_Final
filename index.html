@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>UV</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- core three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
+    <!-- โหลด GLTFLoader-->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <!-- lil-gui -->
+    <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
+
+    <script>
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        camera.position.set(0, 2, 6);
+        camera.lookAt(0, 0, 0);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 0.5, 0);
+        controls.enableDamping = true;
+
+        // --- Ground (เส้นกริดช่วยกะระยะ) ---
+        const grid = new THREE.GridHelper(10, 10, 0x666666, 0x333333);
+        grid.position.y = 0.8;
+        scene.add(grid);
+
+        //Ambient Light
+        const ambientLight = new THREE.AmbientLight(0x808080);
+        scene.add(ambientLight);
+
+        //Directional Light
+        const directionalLight = new THREE.DirectionalLight(0xffeedd, 0.9);
+        directionalLight.position.set(-5, 6, 7);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+        //แสดงตำแหน่งแสง
+        const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 1);
+        scene.add(lightHelper);
+
+        // ✅ Load environment EXR
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+
+        const exrLoader = new THREE.EXRLoader();
+        exrLoader.load(
+            'https://chotika47.github.io/ComGraph_Final/symmetrical_garden_02_1k.exr',
+            (texture) => {
+                const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+                scene.environment = envMap;
+                scene.background = envMap;
+
+                texture.dispose();
+                pmremGenerator.dispose();
+            },
+            undefined,
+            (err) => {
+                console.error('EXR load error:', err);
+            }
+        );
+
+
+        // --- โหลดไฟล์ .glb ---
+        const loader = new THREE.GLTFLoader();
+        const mixers = [];
+
+        function loadGBL(glbLink) {
+            return new Promise((resolve, reject) => {
+                loader.load(
+                    glbLink,
+                    (gltf) => {
+                        const model = gltf.scene;
+                        scene.add(model);
+
+                        // ถ้ามี animation
+                        if (gltf.animations && gltf.animations.length > 0) {
+                            const mixer = new THREE.AnimationMixer(model);
+                            mixers.push(mixer);
+
+                            const clip = gltf.animations.find(a => a.name === "Action" || a.name === "Take 001");
+                            if (clip) {
+                                const action = mixer.clipAction(clip);
+                                action.loop = THREE.LoopRepeat;
+                                action.clampWhenFinished = false;
+                                action.play();
+                            }
+                        }
+
+                        resolve(model);
+                    },
+                    undefined,
+                    reject
+                );
+            });
+        }
+
+
+        //loadGBL('https://chotika47.github.io/ComGraph_Final/hdri_sky.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/hdri_fantasyTown.glb');
+
+        loadGBL('https://chotika47.github.io/ComGraph_Final/windmill.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/ground.glb');
+
+        loadGBL('https://chotika47.github.io/ComGraph_Final/bigTree.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/fence.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/lightPole.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/log.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/mailBox.glb');
+
+        loadGBL('https://chotika47.github.io/ComGraph_Final/path.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/fishPond.glb');
+
+        //กำหนดการคลิกเปลี่ยนมุมกล้อง
+        const clickable = [];
+        let cameraPosition = new THREE.Vector3(0, 2, 6);
+        let targetPosition = new THREE.Vector3(0, 0.5, 0);
+
+        function addObj(mesh, name) {
+            mesh.name = name;
+            clickable.push(mesh);
+            return mesh;
+        }
+
+        // ✅ ประกาศ VIEWS ว่าง ๆ ไว้ก่อน
+        const VIEWS = {};
+
+        //รอโหลดโมเดลให้เสร็จก่อนถึงจะคลิกได้
+        (async function init() {
+            const mushroomHouse = await loadGBL('https://chotika47.github.io/ComGraph_Final/mushroomHouse.glb'); // ✅ ใช้ await
+            const aboutMe = await loadGBL('https://chotika47.github.io/ComGraph_Final/sign_aboutMe.glb');
+            const works = await loadGBL('https://chotika47.github.io/ComGraph_Final/sign_works.glb');
+            const credits = await loadGBL('https://chotika47.github.io/ComGraph_Final/sign_credits.glb');
+
+            // ✅ ตั้งค่า VIEWS หลังจากโมเดลโหลดเสร็จแล้ว
+            VIEWS.myProfile = {
+                pos: new THREE.Vector3(0, 1.8, 3.0),
+                tar: mushroomHouse.position.clone()
+            };
+            VIEWS.works = {
+                pos: new THREE.Vector3(3, 1.8, 3.0),
+                tar: works.position.clone()
+            };
+            VIEWS.credits = {
+                pos: new THREE.Vector3(-3, 1.8, 3.0),
+                tar: credits.position.clone()
+            };
+
+            // ✅ ทำให้คลิกได้หลังโหลดเสร็จจริง ๆ
+            addObj(aboutMe, 'myProfile');
+            addObj(works, 'works');
+            addObj(credits, 'credits');
+        })();
+
+        // --- Raycaster + คลิกเพื่อสลับมุม ---
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+
+        function setPointer(e) {
+            const r = renderer.domElement.getBoundingClientRect();
+            const x = (e.clientX ?? e.touches[0].clientX) - r.left;
+            const y = (e.clientY ?? e.touches[0].clientY) - r.top;
+            pointer.x = (x / r.width) * 2 - 1;
+            pointer.y = -(y / r.height) * 2 + 1;
+        }
+
+        function onPick(e) {
+            setPointer(e);
+            raycaster.setFromCamera(pointer, camera);
+            const hits = raycaster.intersectObjects(clickable, true); // ✅ เปลี่ยนเป็น true เพื่อเช็ค children
+            if (hits.length === 0) return;
+
+            // ✅ หา parent object ที่อยู่ใน clickable
+            let targetObj = null;
+            for (let hit of hits) {
+                let obj = hit.object;
+                while (obj) {
+                    if (clickable.includes(obj)) {
+                        targetObj = obj;
+                        break;
+                    }
+                    obj = obj.parent;
+                }
+                if (targetObj) break;
+            }
+
+            if (!targetObj) return;
+            const view = VIEWS[targetObj.name];
+            if (!view) return;
+
+            // ✅ ตั้งค่าตำแหน่งเป้าหมาย
+            cameraPosition.copy(view.pos);
+            targetPosition.copy(view.tar);
+        }
+
+        renderer.domElement.addEventListener('click', onPick);
+        renderer.domElement.addEventListener('touchend', (e) => { onPick(e); }, { passive: true });
+
+        // --- Resize ---
+        addEventListener('resize', () => {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+        });
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            mixers.forEach(m => m.update(delta));
+
+            // ✅ ค่อย ๆ เคลื่อนกล้องไปยังตำแหน่งใหม่
+            camera.position.x = lerp(camera.position.x, cameraPosition.x, 0.05);
+            camera.position.y = lerp(camera.position.y, cameraPosition.y, 0.05);
+            camera.position.z = lerp(camera.position.z, cameraPosition.z, 0.05);
+
+            // ✅ ค่อย ๆ หมุนกล้องไปมอง target ใหม่
+            controls.target.x = lerp(controls.target.x, targetPosition.x, 0.05);
+            controls.target.y = lerp(controls.target.y, targetPosition.y, 0.05);
+            controls.target.z = lerp(controls.target.z, targetPosition.z, 0.05);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+    </script>
+</body>
+
+</html>
