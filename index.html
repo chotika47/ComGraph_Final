@@ -196,6 +196,8 @@
                 );
             });
         }
+
+        
         
         /*------------------------------------------------------------------------*/
         const tree_leaves_uniforms = {
@@ -329,7 +331,7 @@
 
             VIEWS.sign2_next = {
                 pos: new THREE.Vector3(-3.59, 3.53, -0.54),//-3.59, 3.53, -0.54
-                tar: new THREE.Vector3(0, 3.53, -0.54)
+                tar: new THREE.Vector3(0, 2, -30)
             };
             VIEWS.sign3_back = {
                 pos: new THREE.Vector3(-5.87, 0.97, 4.75),
@@ -345,42 +347,36 @@
             addObj(next, 'board_next');
             addObj(sign2, 'sign2_next');
             addObj(sign3, 'sign3_back');
-
-
-            /**/
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/ground.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/pinetree.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/tree_body.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/cooking_stove.glb');
-
-
-
-
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/fence.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/windmill.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/mushroomHouse.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/grass.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/mailbox.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/rockpath.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/rocks.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/small_mushrooms.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/wagon.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/wand.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/windmill.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/fishPond.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/mushroom1.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/mushroom2.glb').then(mushroom2 => {
-                mushroom2.position.x = -9.5;  // 👈 ลองเลื่อนไปทางซ้าย (ค่าลบคือซ้าย, ค่าบวกคือขวา)
-            });
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/mushroom3.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/dinningArea.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/my_profile.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/lightPole.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/board.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/credit.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/sign2_pole.glb');
-            await loadGBL('https://chotika47.github.io/ComGraph_Final/sign3_pole.glb');
         })();
+
+        loadGBL('https://chotika47.github.io/ComGraph_Final/ground.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/pinetree.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/tree_body.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/cooking_stove.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/fence.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/windmill.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/mushroomHouse.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/grass.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/mailbox.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/rockpath.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/rocks.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/small_mushrooms.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/wagon.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/wand.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/windmill.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/fishPond.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/mushroom1.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/mushroom2.glb').then(mushroom2 => {
+            mushroom2.position.x = -9.5;  // 👈 ลองเลื่อนไปทางซ้าย (ค่าลบคือซ้าย, ค่าบวกคือขวา)
+        });
+        loadGBL('https://chotika47.github.io/ComGraph_Final/mushroom3.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/dinningArea.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/my_profile.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/lightPole.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/board.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/credit.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/sign2_pole.glb');
+        loadGBL('https://chotika47.github.io/ComGraph_Final/sign3_pole.glb');
 
         // --- Raycaster + คลิกเพื่อสลับมุม ---
         const raycaster = new THREE.Raycaster();
