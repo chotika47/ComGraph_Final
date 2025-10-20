@@ -340,7 +340,7 @@
             const credits = await loadGBL('https://chotika47.github.io/ComGraph_Final/sign_credit.glb');
             
             const sign2 = await loadGBL('https://chotika47.github.io/ComGraph_Final/sign2_next.glb');
-            const sign3 = loadGBL('https://chotika47.github.io/ComGraph_Final/sign3_back.glb');
+            const sign3 = await loadGBL('https://chotika47.github.io/ComGraph_Final/sign3_back.glb');
 
             const back = await loadGBL('https://chotika47.github.io/ComGraph_Final/board_back.glb');
             back.position.set(-0.85, -0.8, 0.85);
@@ -494,5 +494,6 @@
         });
     </script>
 </body>
+
 
 </html>
